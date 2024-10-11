@@ -1,0 +1,74 @@
+﻿@model Web.Models.HOADON
+
+@{
+    ViewBag.Title = "Chi tiết";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+<h2 class="hi"><i class="fas fa-file-invoice"></i> Thông tin</h2>
+
+<div>
+    <h4>Hóa đơn</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Tên phòng
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PHONG.tenphong)
+        </dd>
+
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Thời gian lập hóa đơn
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ngaytao)
+        </dd>
+
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Tiền điện nước
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tiendiennuoc) VND
+        </dd>
+
+
+
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Tiền phòng
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tienphong) VND
+        </dd>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Tổng tiền
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tongtien)
+        </dd>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Học sinh nhận hóa đơn
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tenhs)
+        </dd>
+
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Nhân viên lập hóa đơn
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tennv)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index")
+</p>

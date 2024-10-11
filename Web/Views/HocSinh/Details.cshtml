@@ -1,0 +1,56 @@
+﻿@model Web.Models.HOCSINH
+
+@{
+    ViewBag.Title = "Chi tiết";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+<h2 class="hi"><i class="fa-solid fa-person-circle-exclamation"></i> Thông tin</h2>
+
+<div>
+    <h4>@Model.hoten</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <i class="fa-solid fa-circle-info"></i>
+            Họ tên:
+            @Model.hoten
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i>
+            Ngày sinh
+            @Model.ngaysinh.Value.ToString("dd/MM/yyyy")
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i>
+            Giới tính:
+            @(Model.gioitinh==true?"Nam":"Nữ")
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i>
+            Lớp:
+            @Model.lop
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i>
+            Quê quán:
+            @Model.quequan
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i>
+            Thông tin phụ huynh:
+            @Model.ttphuhuynh
+        </dt>
+
+    </dl>
+</div>
+<p>
+    @{
+        string _link = Url.Action("Index");
+        if (ViewBag.Back_Url != null)
+        {
+            _link = ViewBag.Back_Url;
+        }
+    }
+    <i class="fa-regular fa-square-caret-left"></i> <a href="@_link">Quay lại</a>
+</p>
