@@ -1,0 +1,82 @@
+﻿@model Web.Models.HOCSINH_NEW
+@using Web.Models;
+@{
+    ViewBag.Title = "Sửa thông tin";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+<h2 class="hi"><i class="fa-solid fa-person-circle-exclamation"></i> Thông tin</h2>
+
+@using (Html.BeginForm("EditNew","HocSinh"))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@Model.hoten</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.mahs)
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.hoten, "Họ và tên", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.hoten, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.hoten, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ngaysinh, "Ngày sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="date" name="ngaysinh" class="form-control text-box single-line" value="@Model.ngaysinh.Value.ToString("yyyy-MM-dd")" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.quequan, "Quê quán", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.quequan, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.quequan, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.gioitinh, "Giới tính", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    <select class="list-box tri-state" id="gioitinh" name="gioitinh">
+                        <option value="true" @(Model.gioitinh == true ? "selected" : "")>Nam</option>
+                        <option value="false" @(Model.gioitinh == false ? "selected" : "")>Nữ</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ttphuhuynh, "Phụ huynh", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ttphuhuynh, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ttphuhuynh, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.lop, "Lớp", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.lop, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.lop, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index",new {stt=true})
+</div>
