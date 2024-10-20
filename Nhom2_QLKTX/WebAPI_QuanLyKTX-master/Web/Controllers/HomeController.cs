@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net.Http;
-using System.Web;
 using System.Web.Mvc;
 using Web.Middlewares;
 using Web.Models;
@@ -11,7 +7,6 @@ using Web.Models;
 namespace Web.Controllers
 {
     [HandleError]
-    
     public class HomeController : Controller
     {
         private Context db = new Context();
@@ -29,8 +24,9 @@ namespace Web.Controllers
             return View("~/View/Shared/Error.cshtml");
         }
 
-        [HttpGet,Route("LogIn")]
-        public ActionResult Login() {
+        [HttpGet, Route("LogIn")]
+        public ActionResult Login()
+        {
             try
             {
                 return View("Login");
@@ -40,24 +36,21 @@ namespace Web.Controllers
                 ViewBag.Msg = x.Message;
                 return View("~/View/Shared/Error.cshtml");
             }
-            
         }
+
         [HttpPost, Route("Login")]
         public JsonResult Login(string email, string password)
         {
-
             var return_id = 0;
             var stt = "error";
             var stt_code = 400;
             var messeage = "Tên tài khoản hoặc mật khẩu không đúng!";
 
-
             if (string.IsNullOrEmpty(email))
             {
                 messeage = "Tên tài khoản không được để trống! ";
-            }      
-            else
-            if (string.IsNullOrEmpty(password))
+            }
+            else if (string.IsNullOrEmpty(password))
             {
                 messeage = "Mật khẩu không được để trống! ";
             }
@@ -75,7 +68,7 @@ namespace Web.Controllers
                 else
                 {
                     stt_code = 404;
-                }    
+                }
             }
 
             var _j = new
@@ -88,22 +81,19 @@ namespace Web.Controllers
             return Json(_j);
         }
 
-        [HttpPost,Route("SignUp")]
+        [HttpPost, Route("SignUp")]
         public JsonResult DangKy(TAIKHOAN e)
         {
-
             var return_id = 0;
             var stt = "error";
             var stt_code = 400;
             var messeage = "!";
 
-
             if (string.IsNullOrEmpty(e.email))
             {
                 messeage = "Email tài khoản không được để trống! ";
             }
-            else
-            if (string.IsNullOrEmpty(e.pass))
+            else if (string.IsNullOrEmpty(e.pass))
             {
                 messeage = "Mật khẩu không được để trống! ";
             }
@@ -122,13 +112,10 @@ namespace Web.Controllers
                         return_id = e.matk;
                         messeage = "Tạo tài khoản thành công! Vui lòng đăng nhập!";
                     }
-                    catch(Exception x)
+                    catch (Exception x)
                     {
                         messeage = x.Message;
                     }
-                    
-
-                    
                 }
                 else
                 {
@@ -148,17 +135,18 @@ namespace Web.Controllers
         }
 
         [HttpGet, Route("LogOut")]
-        public ActionResult LogOut() {
+        public ActionResult LogOut()
+        {
             Session.Clear();
             return RedirectToAction(nameof(Login));
         }
 
         [CheckUserSession]
-        [HttpGet,Route("ThongTinTaiKhoan")]
+        [HttpGet, Route("ThongTinTaiKhoan")]
         public ActionResult ThongTinTaiKhoan()
         {
             var _id = int.Parse(Session["user_id"].ToString());
-            var e = db.TAIKHOANs.FirstOrDefault(x=>x.matk==_id);
+            var e = db.TAIKHOANs.FirstOrDefault(x => x.matk == _id);
             if (e != null)
             {
                 return View(e);
@@ -167,7 +155,7 @@ namespace Web.Controllers
             {
                 ViewBag.Msg = "Session không hợp lệ!";
                 return View("~/Shared/Error.cshtml");
-            }    
+            }
         }
 
         [CheckUserSession]
@@ -176,17 +164,21 @@ namespace Web.Controllers
         {
             if (e != null)
             {
-                var o = db.TAIKHOANs.FirstOrDefault(x=>x.matk==e.matk);
-                if (e != null)
+                var o = db.TAIKHOANs.FirstOrDefault(x => x.matk == e.matk);
+                if (o != null) 
                 {
-                    if (e.hoten != o.hoten)
+                    if (!string.IsNullOrEmpty(e.hoten) && e.hoten != o.hoten)
                         o.hoten = e.hoten;
-                    if(o.email != e.email)
-                        o.email = e.email;
-                    if(!string.IsNullOrEmpty(e.pass) && o.pass != e.pass)
-                        o.pass = e.pass;
-                    if(o.cvu!=e.cvu)
-                        o.cvu = e.cvu;
+
+                    if (!string.IsNullOrEmpty(o.email))
+                        e.email = o.email;  
+
+                    if (!string.IsNullOrEmpty(o.cvu))
+                        e.cvu = o.cvu;  
+                    
+                    if (!string.IsNullOrEmpty(e.pass) && e.pass != o.pass)
+                        o.pass = e.pass; 
+
                     var stt = db.SaveChanges();
                     if (stt > 0)
                         ViewBag.Msg = "Lưu thành công!";
@@ -197,9 +189,8 @@ namespace Web.Controllers
             else
             {
                 ViewBag.Msg = "Tham số không hợp lệ";
-            }    
-            return View();
+            }
+            return View(e); 
         }
-
     }
 }
