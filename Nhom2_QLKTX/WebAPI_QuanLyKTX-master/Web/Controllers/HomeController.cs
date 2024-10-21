@@ -48,11 +48,15 @@ namespace Web.Controllers
 
             if (string.IsNullOrEmpty(email))
             {
-                messeage = "Tên tài khoản không được để trống! ";
+                messeage = "Tên tài khoản không được để trống!";
+            }
+            else if (!IsValidEmail(email))
+            {
+                messeage = "Địa chỉ email không hợp lệ!";
             }
             else if (string.IsNullOrEmpty(password))
             {
-                messeage = "Mật khẩu không được để trống! ";
+                messeage = "Mật khẩu không được để trống!";
             }
             else
             {
@@ -81,6 +85,21 @@ namespace Web.Controllers
             return Json(_j);
         }
 
+        // Hàm kiểm tra email hợp lệ
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
         [HttpPost, Route("SignUp")]
         public JsonResult DangKy(TAIKHOAN e)
         {
@@ -91,11 +110,15 @@ namespace Web.Controllers
 
             if (string.IsNullOrEmpty(e.email))
             {
-                messeage = "Email tài khoản không được để trống! ";
+                messeage = "Email tài khoản không được để trống!";
+            }
+            else if (!IsValidEmail(e.email))
+            {
+                messeage = "Địa chỉ email không hợp lệ!";
             }
             else if (string.IsNullOrEmpty(e.pass))
             {
-                messeage = "Mật khẩu không được để trống! ";
+                messeage = "Mật khẩu không được để trống!";
             }
             else
             {
@@ -133,6 +156,7 @@ namespace Web.Controllers
             };
             return Json(_j);
         }
+
 
         [HttpGet, Route("LogOut")]
         public ActionResult LogOut()
