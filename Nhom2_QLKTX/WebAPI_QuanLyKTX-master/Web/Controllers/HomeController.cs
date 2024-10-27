@@ -127,7 +127,7 @@ namespace Web.Controllers
                 {
                     try
                     {
-                        e.cvu = "ADMIN";
+                        e.cvu = "Học Sinh";
                         db.TAIKHOANs.Add(e);
                         db.SaveChanges();
                         stt = "OK";

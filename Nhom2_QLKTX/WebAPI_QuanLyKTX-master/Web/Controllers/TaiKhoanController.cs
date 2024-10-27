@@ -17,7 +17,7 @@ namespace Web.Controllers
         private Context db = new Context();
 
         [CheckUserSession]
-        public ActionResult Index(int page = 1, int limit = 10, string msg="")
+        public ActionResult Index(int page = 1, int limit = 10, string msg = "")
         {
             using (var client = new HttpClient())
             {
@@ -27,7 +27,7 @@ namespace Web.Controllers
                 }
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
                 var _api = Url.Action("get", "taikhoan", new { httproute = "DefaultApi", limit = limit, page = page });
-                var _url = _host + _api;          
+                var _url = _host + _api;
                 var responseTask = client.GetAsync(_url);
                 responseTask.Wait();
 
@@ -47,7 +47,7 @@ namespace Web.Controllers
                     {
                         ViewBag.I = (ViewBag.CurrentPage - 1) * 10 + 1; //số thứ tự tiếp theo 
                     }
-                    return View("~/Views/Taikhoan/Index.cshtml",list.ToList());
+                    return View("~/Views/Taikhoan/Index.cshtml", list.ToList());
                 }
                 else
                 {
@@ -84,7 +84,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "matk,hoten,email,pass,cvu")] TAIKHOAN e)
         {
-            var exist = db.TAIKHOANs.FirstOrDefault(x=>x.email == e.email);
+            var exist = db.TAIKHOANs.FirstOrDefault(x => x.email == e.email);
             if (exist != null)
             {
                 ViewBag.Msg = "Email đã tồn tại, vui lòng chọn email khác!";
@@ -121,7 +121,7 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("get", "taikhoan", new { httproute = "DefaultApi", id=id });
+                var _api = Url.Action("get", "taikhoan", new { httproute = "DefaultApi", id = id });
                 var _url = _host + _api;
                 var responseTask = client.GetAsync(_url);
                 responseTask.Wait();
@@ -160,7 +160,7 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("edit", "taikhoan", new { httproute = "DefaultApi"});
+                var _api = Url.Action("edit", "taikhoan", new { httproute = "DefaultApi" });
                 var _url = _host + _api;
                 var responseTask = client.PutAsJsonAsync<TAIKHOAN>(_url, e);
                 responseTask.Wait();
@@ -186,7 +186,7 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("delete", "taikhoan", new { httproute = "DefaultApi" , id=id});
+                var _api = Url.Action("delete", "taikhoan", new { httproute = "DefaultApi", id = id });
                 var _url = _host + _api;
                 var deleteTask = client.DeleteAsync(_url);
                 deleteTask.Wait();

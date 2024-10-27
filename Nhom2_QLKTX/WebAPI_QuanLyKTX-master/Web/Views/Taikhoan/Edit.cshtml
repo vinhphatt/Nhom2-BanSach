@@ -5,59 +5,65 @@
     Layout = "~/Views/Shared/MainLayout.cshtml";
 }
 
-<h2 class="hi"><i class="fas fa-user-circle"></i> Thông tin</h2>
+<h2 class="hi"><i class="fas fa-user-circle"></i> Thông tin tài khoản</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.matk)
 
-    <p class="msg-stt">@ViewBag.Msg</p>
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.matk)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.hoten, "Họ tên", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.hoten, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.hoten, "", new { @class = "text-danger" })
+        <p class="msg-stt">@ViewBag.Msg</p>
+
+        <div class="form-group row">
+            @Html.LabelFor(model => model.hoten, "Họ tên", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.hoten, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.hoten, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(model => model.email, "Email", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="form-control-static">@Model.email</p>
+                @Html.HiddenFor(model => model.email)  <!-- Trường ẩn để giữ dữ liệu email -->
+                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <!-- Thêm class row -->
+            @Html.LabelFor(model => model.pass, "Password", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.pass, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.pass, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row">
+            @Html.LabelFor(model => model.cvu, "Chức vụ", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.cvu,
+                    new SelectList(new List<SelectListItem>
+                    {
+                        new SelectListItem { Value = "ADMIN", Text = "ADMIN" },
+                        new SelectListItem { Value = "Học Sinh", Text = "Học Sinh" }
+                    }, "Value", "Text", Model.cvu),
+                    "Chọn chức vụ",
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.cvu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Lưu thông tin" class="btn btn-primary" style="background-color: #aa90b1; border: none; color: white;" />
+                @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary", @style = "margin-left:10px;" })
+            </div>
         </div>
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.email, "Email", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.pass, "Password", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.pass, new { htmlAttributes = new { @class = "form-control", type = "password" } })
-            @Html.ValidationMessageFor(model => model.pass, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.cvu, "Chức vụ", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.cvu, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.cvu, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
-        </div>
-    </div>
-</div>
 }
-
-<div>
-    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index")
-</div>
