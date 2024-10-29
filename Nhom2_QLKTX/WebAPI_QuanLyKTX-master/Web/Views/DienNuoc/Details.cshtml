@@ -1,0 +1,45 @@
+﻿@model Web.Models.PHIEU_DIENNUOC
+
+@{
+    ViewBag.Title = "Thông tin chi tiết";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+<h2 class="hi"><i class="fa-solid fa-money-check"></i> Thông tin</h2>
+
+<div>
+    <h4>Phiếu điện nước: #@Model.maphieu-@Model.ngaytaophieu.Value.ToString("ddMyyyy")</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Tên phòng: @Html.DisplayFor(model => model.PHONG.tenphong)
+        </dt>
+
+
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Ngày tạo: @Model.ngaytaophieu.Value.ToString("dd/MM/yyyy")
+        </dt>
+
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Giá điện: @Model.giadien VND
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Số điện điện: @Model.sodien số
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Giá nước: @Model.gianuoc VND
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Số nước: @Model.sonuoc khối
+        </dt>
+        <dt>
+            <i class="fa-solid fa-circle-info"></i> Tổng tiền: @Model.tongtien VND
+        </dt>
+
+
+
+    </dl>
+</div>
+<p>
+    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index")
+</p>
