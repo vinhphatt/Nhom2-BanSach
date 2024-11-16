@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -18,7 +18,6 @@ namespace Web.Controllers
         [CheckUserSession]
         public ActionResult Index(int page = 1, int limit = 10, string msg = "")
         {
-
             using (var client = new HttpClient())
             {
                 if (!string.IsNullOrEmpty(msg))
@@ -28,7 +27,7 @@ namespace Web.Controllers
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
                 var _api = Url.Action("get", "phong", new { httproute = "DefaultApi", limit = limit, page = page });
                 var _url = _host + _api;
-                // client.BaseAddress = new Uri(_url);              
+
                 var responseTask = client.GetAsync(_url);
                 responseTask.Wait();
 
@@ -39,6 +38,27 @@ namespace Web.Controllers
                     readTask.Wait();
                     IEnumerable<PHONG> list = null;
                     list = readTask.Result;
+
+                    // Cập nhật trạng thái phòng nếu số lượng học sinh bằng 0
+                    using (var db = new Context())
+                    {
+                        foreach (var phong in list)
+                        {
+                            if (phong.HOCSINHs.Count == 0)
+                            {
+                                var phongToUpdate = db.PHONGs.Find(phong.maphong);
+                                if (phongToUpdate != null)
+                                {
+                                    phongToUpdate.tinhtrang = false;
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                    }
+
+                    // Sắp xếp danh sách phòng sao cho các phòng hoạt động được ưu tiên lên đầu
+                    list = list.OrderByDescending(p => p.tinhtrang).ToList();
+
                     ViewBag.CurrentPage = page;
                     var o_list = new Context().PHONGs.ToList();
                     ViewBag.TotalPage = Math.Ceiling((float)o_list.Count / 10);
@@ -85,6 +105,19 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(PHONG e)
         {
+            // Thiết lập giá trị mặc định cho tinhtrang là false (Chưa hoạt động)
+            e.tinhtrang = false;
+
+            // Kiểm tra xem tên phòng đã tồn tại hay chưa
+            using (var db = new Context())
+            {
+                if (db.PHONGs.Any(p => p.tenphong == e.tenphong))
+                {
+                    ModelState.AddModelError("tenphong", "Tên phòng đã tồn tại.");
+                    return View(e);
+                }
+            }
+
             using (var client = new HttpClient())
             {
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
@@ -108,6 +141,7 @@ namespace Web.Controllers
                 }
             }
         }
+
 
         [CheckUserSession]
         [HttpGet]
