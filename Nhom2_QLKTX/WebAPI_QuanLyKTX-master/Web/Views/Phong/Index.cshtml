@@ -1,66 +1,71 @@
-﻿@model IEnumerable<Web.Models.PHONG>
+@model IEnumerable<Web.Models.PHONG>
 
 @{
     ViewBag.Title = "Danh sách phòng";
     Layout = "~/Views/Shared/MainLayout.cshtml";
     int Stt = ViewBag.I;
-
 }
 
-<h2 class="display-6 text-capitalize lb-page">Danh sách các phòng hiện có </h2>
+<h2 class="display-6 text-capitalize lb-page">Danh sách các phòng hiện có</h2>
 <a class="btn mb-2 add-new" e-type="create" href="#" style="background-color: rgb(154, 192, 173)"><i class="fa-solid fa-plus"></i> Thêm mới</a>
-<table class="table table-striped ">
+
+<div class="form-group">
+    <label for="tinhtrang-filter">Lọc theo tình trạng:</label>
+    <select id="tinhtrang-filter" class="form-control">
+        <option value="">Tất cả</option>
+        <option value="true">Hoạt động</option>
+        <option value="false">Chưa hoạt động</option>
+    </select>
+</div>
+
+<table class="table table-striped" id="phong-table">
     <thead>
         <tr>
             <th scope="col">STT</th>
-            <th scope="col">
-                Tên phòng
-            </th>
-            <th scope="col">
-                Số giường
-            </th>
-            <th scope="col">
-                Tầng
-            </th>
-            <th scope="col">
-                Số người
-            </th>
-            <th scope="col">
-                Tình trạng
-            </th>
+            <th scope="col">Tên phòng</th>
+            <th scope="col">Số giường</th>
+            <th scope="col">Tầng</th>
+            <th scope="col">Số người</th>
+            <th scope="col">Tình trạng</th>
             <th scope="col">Hành động</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @(Stt++)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.tenphong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.tsogiuong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.tang)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HOCSINHs.Count)
-            </td>
-            <td>
-                @(item.tinhtrang==true? "Hoạt động":"Không hoạt động")
-            </td>
-            <td>
-                <a e-id="@item.maphong" e-type="detail" class="btn bg-gradient text-white" style="background-color: rgb(115, 144, 166) "><i class="fa-solid fa-calendar-week"></i> Chi tiết</a>
-                <i class="fa-brands fa-squarespace fs-5"></i>
-                <a e-id="@item.maphong" e-type="edit" class="btn bg-secondary bg-gradient text-white"><i class="fa-solid fa-pen-to-square"></i> Sửa</a>
-                <i class="fa-brands fa-squarespace fs-5"></i>
-                <a e-id="@item.maphong" e-type="delete" class="btn text-white" style="background-color: rgb(200, 103, 122)"><i class="fa-solid fa-trash-can"></i> Xóa</a>
-            </td>
-        </tr>
+            <tr data-tinhtrang="@item.tinhtrang.ToString().ToLower()">
+                <td>@(Stt++)</td>
+                <td>@Html.DisplayFor(modelItem => item.tenphong)</td>
+                <td>@Html.DisplayFor(modelItem => item.tsogiuong)</td>
+                <td>@Html.DisplayFor(modelItem => item.tang)</td>
+                <td>@Html.DisplayFor(modelItem => item.HOCSINHs.Count)</td>
+                <td>@(item.tinhtrang == true ? "Hoạt động" : "Chưa hoạt động")</td>
+                <td>
+                    <a e-id="@item.maphong" e-type="detail" class="btn bg-gradient text-white" style="background-color: rgb(115, 144, 166)"><i class="fa-solid fa-calendar-week"></i> Chi tiết</a>
+                    <i class="fa-brands fa-squarespace fs-5"></i>
+                    <a e-id="@item.maphong" e-type="edit" class="btn bg-secondary bg-gradient text-white"><i class="fa-solid fa-pen-to-square"></i> Sửa</a>
+                    @if (!item.tinhtrang.GetValueOrDefault())
+                    {
+                        <i class="fa-brands fa-squarespace fs-5"></i>
+                        <a e-id="@item.maphong" e-type="delete" class="btn text-white" style="background-color: rgb(200, 103, 122)" onclick="deletePhong(@item.maphong)"><i class="fa-solid fa-trash-can"></i> Xóa</a>
+                    }
+                </td>
+            </tr>
         }
     </tbody>
 </table>
+
+<script>
+    document.getElementById('tinhtrang-filter').addEventListener('change', function () {
+        var tinhtrang = this.value;
+        var rows = document.querySelectorAll('#phong-table tbody tr');
+
+        rows.forEach(function (row) {
+            if (tinhtrang === '' || row.getAttribute('data-tinhtrang') === tinhtrang) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
