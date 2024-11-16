@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -168,12 +168,12 @@ namespace Web.Controllers
         [CheckUserSession]
         public ActionResult XepPhong(int? id)
         {
-            if(id != null)
+            if (id != null)
             {
-                var o = db.HOCSINH_NEW.FirstOrDefault(x=>x.mahs==id);
+                var o = db.HOCSINH_NEW.FirstOrDefault(x => x.mahs == id);
                 if (o != null)
                 {
-                    var list_phong = db.PHONGs.Where(x=>x.HOCSINHs.Count<10).ToList();
+                    var list_phong = db.PHONGs.Where(x => x.HOCSINHs.Count < 10).ToList();
                     ViewBag.Hoc_Sinh = o;
                     ViewBag.List_Phong = list_phong;
                     return View();
@@ -183,42 +183,40 @@ namespace Web.Controllers
                     ViewBag.Code = 404;
                     ViewBag.Msg = "ID học sinh không tồn tại";
                     return View("~/Views/Shared/Error.cshtml");
-                }    
+                }
             }
             else
             {
-                return RedirectToAction("Index", new {stt=true});
-            }    
+                return RedirectToAction("Index", new { stt = true });
+            }
         }
 
         [CheckUserSession]
         [HttpPost]
         public ActionResult XepPhong(int mahs, int maphong)
         {
-            var hs = db.HOCSINH_NEW.FirstOrDefault(x=>x.mahs==mahs);
+            var hs = db.HOCSINH_NEW.FirstOrDefault(x => x.mahs == mahs);
             var p = db.PHONGs.FirstOrDefault(x => x.maphong == maphong);
             if (hs != null)
             {
-                if(p != null)
+                if (p != null)
                 {
-                    if (p.HOCSINHs.Count >= 10)
+                    if (p.HOCSINHs.Count >= p.tsogiuong) // Kiểm tra số giường của phòng
                     {
-                        return RedirectToAction("Index",new {stt=true, msg="Phòng này đã đủ người!"});
+                        return RedirectToAction("Index", new { stt = true, msg = "Phòng này đã đủ người!" });
                     }
                     else
                     {
                         var _in = new HOCSINH
                         {
-                            maphong=maphong,
-                            hoten=hs.hoten,
-                            ngaysinh=hs.ngaysinh,
-                            gioitinh=hs.gioitinh,
-                            lop=hs.lop,
-                            ttphuhuynh=hs.ttphuhuynh,
-                            quequan=hs.quequan,
+                            maphong = maphong,
+                            hoten = hs.hoten,
+                            ngaysinh = hs.ngaysinh,
+                            gioitinh = hs.gioitinh,
+                            lop = hs.lop,
+                            ttphuhuynh = hs.ttphuhuynh,
+                            quequan = hs.quequan,
                         };
-
-
 
                         db.HOCSINHs.Add(_in);
                         db.HOCSINH_NEW.Remove(hs);
@@ -226,7 +224,10 @@ namespace Web.Controllers
                         var _msg = "";
                         if (stt > 0)
                         {
-                            
+                            // Cập nhật tình trạng phòng
+                            p.tinhtrang = p.HOCSINHs.Count > 0;
+                            db.SaveChanges();
+
                             _msg = "Xếp phòng thành công!";
                         }
                         else
@@ -235,22 +236,21 @@ namespace Web.Controllers
                         }
 
                         return RedirectToAction("Index", new { stt = true, msg = _msg });
-                    }    
+                    }
                 }
                 else
                 {
                     ViewBag.Msg = "ID phòng không tồn tại";
                     ViewBag.Code = 404;
                     return View("~/Views/Shared/Error.cshtml");
-                }    
+                }
             }
             else
             {
                 ViewBag.Msg = "ID học sinh không tồn tại";
                 ViewBag.Code = 404;
                 return View("~/Views/Shared/Error.cshtml");
-            }    
-            
+            }
         }
 
         [HttpPost]
