@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using Web.Middlewares;
@@ -68,6 +68,7 @@ namespace Web.Controllers
                     return_id = u.matk;
                     messeage = "Đăng nhập thành công! Đang chuyển hướng!";
                     Session["user_id"] = u.matk;
+                    Session["isAdmin"] = (u.cvu == "ADMIN");  
                 }
                 else
                 {
@@ -97,64 +98,6 @@ namespace Web.Controllers
             {
                 return false;
             }
-        }
-
-
-        [HttpPost, Route("SignUp")]
-        public JsonResult DangKy(TAIKHOAN e)
-        {
-            var return_id = 0;
-            var stt = "error";
-            var stt_code = 400;
-            var messeage = "!";
-
-            if (string.IsNullOrEmpty(e.email))
-            {
-                messeage = "Email tài khoản không được để trống!";
-            }
-            else if (!IsValidEmail(e.email))
-            {
-                messeage = "Địa chỉ email không hợp lệ!";
-            }
-            else if (string.IsNullOrEmpty(e.pass))
-            {
-                messeage = "Mật khẩu không được để trống!";
-            }
-            else
-            {
-                var u = db.TAIKHOANs.FirstOrDefault(x => x.email == e.email);
-                if (u == null)
-                {
-                    try
-                    {
-                        e.cvu = "Học Sinh";
-                        db.TAIKHOANs.Add(e);
-                        db.SaveChanges();
-                        stt = "OK";
-                        stt_code = 200;
-                        return_id = e.matk;
-                        messeage = "Tạo tài khoản thành công! Vui lòng đăng nhập!";
-                    }
-                    catch (Exception x)
-                    {
-                        messeage = x.Message;
-                    }
-                }
-                else
-                {
-                    stt_code = 202;
-                    messeage = "Email đã tồn tại, vui lòng chọn email khác!";
-                }
-            }
-
-            var _j = new
-            {
-                return_id = return_id,
-                stt = stt,
-                stt_code = stt_code,
-                messeage = messeage
-            };
-            return Json(_j);
         }
 
 
@@ -189,19 +132,19 @@ namespace Web.Controllers
             if (e != null)
             {
                 var o = db.TAIKHOANs.FirstOrDefault(x => x.matk == e.matk);
-                if (o != null) 
+                if (o != null)
                 {
                     if (!string.IsNullOrEmpty(e.hoten) && e.hoten != o.hoten)
                         o.hoten = e.hoten;
 
                     if (!string.IsNullOrEmpty(o.email))
-                        e.email = o.email;  
+                        e.email = o.email;
 
                     if (!string.IsNullOrEmpty(o.cvu))
-                        e.cvu = o.cvu;  
-                    
+                        e.cvu = o.cvu;
+
                     if (!string.IsNullOrEmpty(e.pass) && e.pass != o.pass)
-                        o.pass = e.pass; 
+                        o.pass = e.pass;
 
                     var stt = db.SaveChanges();
                     if (stt > 0)
@@ -214,7 +157,7 @@ namespace Web.Controllers
             {
                 ViewBag.Msg = "Tham số không hợp lệ";
             }
-            return View(e); 
+            return View(e);
         }
     }
 }
