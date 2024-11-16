@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Chọn phòng";
     Layout = "~/Views/Shared/MainLayout.cshtml";
     var hs = (Web.Models.HOCSINH_NEW)ViewBag.Hoc_Sinh;
@@ -27,8 +27,8 @@
                 <select id="maphong" name="maphong">
                     @foreach (var i in list)
                     {
-                        <option value="@i.maphong">@i.tenphong (@i.HOCSINHs.Count người)</option>
-                    }tenphon
+                        <option value="@i.maphong">@i.tenphong (@i.HOCSINHs.Count/@i.tsogiuong)</option>
+                    }
                 </select>
             }
         </div>
