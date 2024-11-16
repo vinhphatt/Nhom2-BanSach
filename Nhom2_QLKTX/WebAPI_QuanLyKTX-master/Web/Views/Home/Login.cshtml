@@ -1,4 +1,4 @@
-﻿<title>Đăng nhập</title>
+<title>Đăng nhập</title>
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 <link rel="shortcut icon" type="image/png" href="~/Images/icon.jpg" />
 <style>
@@ -15,6 +15,9 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .inspiration {
@@ -35,160 +38,79 @@
 
     .center {
         position: relative;
-        top: 50%;
-        left: 50%;
         display: inline-block;
         width: 275px;
-       @* height: 490px;*@
         border-radius: 3px;
-        transform: translate(-50%, -50%);
         overflow: hidden;
         background-image: linear-gradient(to top right, #a2927e, #f4e4f6);
     }
 
-    @@media screen and (max-height: 500px) {
-        .center {
-            transition: transform 0.5s;
-            transform: translate(-50%, -50%) scale(0.8);
-        }
-    }
-    .center .login {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-
-        .center .login label {
+        .center .login {
             position: relative;
-            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
         }
 
-            .center .login label .fa {
-                position: absolute;
-                top: 40%;
-                left: 35px;
-                color: #bbb;
+            .center .login label {
+                position: relative;
+                padding: 0 20px;
             }
 
-                .center .login label .fa:before {
-                    position: relative;
-                    left: 1px;
+                .center .login label .fa {
+                    position: absolute;
+                    top: 40%;
+                    left: 35px;
+                    color: #bbb;
                 }
 
-        .center .login input,
-        .center .login .login-button {
-            width: 100%;
-            height: 35px;
-            border: none;
-            border-radius: 30px;
-        }
+                    .center .login label .fa:before {
+                        position: relative;
+                        left: 1px;
+                    }
 
-        .center .login input {
-            padding: 0 20px 0 40px;
-            margin: 5px 0;
-            box-shadow: none;
-            outline: none;
-        }
-
-            .center .login input::-moz-placeholder {
-                color: #ccc;
+            .center .login input,
+            .center .login .login-button {
+                width: 100%;
+                height: 35px;
+                border: none;
+                border-radius: 30px;
             }
 
-            .center .login input:-ms-input-placeholder {
-                color: #ccc;
+            .center .login input {
+                padding: 0 20px 0 40px;
+                margin: 5px 0;
+                box-shadow: none;
+                outline: none;
             }
 
-            .center .login input::placeholder {
-                color: #ccc;
+                .center .login input::-moz-placeholder {
+                    color: #ccc;
+                }
+
+                .center .login input:-ms-input-placeholder {
+                    color: #ccc;
+                }
+
+                .center .login input::placeholder {
+                    color: #ccc;
+                }
+
+                .center .login input.password {
+                    padding: 0 90px 0 40px;
+                }
+
+            .center .login .login-button {
+                width: calc(100% - 40px);
+                margin: 0px 20px 0;
+                outline: none;
+                background-color: #243946;
+                color: #fff;
+                transition: transform 0.1s;
             }
 
-            .center .login input.password {
-                padding: 0 90px 0 40px;
-            }
-
-        .center .login .password-button {
-            position: absolute;
-            top: 9px;
-            right: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 80px;
-            height: 27px;
-            border-radius: 30px;
-            border: none;
-            outline: none;
-            background-color: #243946;
-            color: #fff;
-        }
-
-            .center .login .password-button:active {
-                transform: scale(0.95);
-            }
-
-        .center .login .login-button {
-            width: calc(100% - 40px);
-            margin: 0px 20px 0;
-            outline: none;
-            background-color: #243946;
-            color: #fff;
-            transition: transform 0.1s;
-        }
-
-            .center .login .login-button:active {
-                transform: scale(0.95);
-            }
-
-    .center .social-buttons {
-        display: flex;
-        justify-content: center;
-        margin-top: 25px;
-    }
-
-        .center .social-buttons .social {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 35px;
-            height: 35px;
-            margin: 0 10px;
-            border-radius: 50%;
-            background-color: #243946;
-            color: #fff;
-            font-size: 18px;
-        }
-
-            .center .social-buttons .social:active {
-                transform: scale(0.95);
-            }
-
-    .center .footer {
-        text-align: center;
-        margin-top: 15px;
-    }
-
-    @@keyframes slide-in-elliptic-top-fwd {
-        0% {
-            -webkit-transform: translateY(-1000px) translateX(-45%) scale(0);
-            transform: translateY(-1000px) translateX(-45%) rotateX(-75deg) scale(0);
-            -webkit-transform-origin: 50% 100%;
-            transform-origin: 50% 100%;
-            opacity: 0;
-        }
-
-        100% {
-            -webkit-transform: translateX(-55%) translateY(-100%) rotateX(0) scale(0.8);
-            transform: translateX(-55%) translateY(-100%) rotateX(0) scale(0.8);
-            -webkit-transform-origin: 50% 1400px;
-            transform-origin: 50% 1400px;
-            opacity: 1;
-        }
-    }
-
-    .center {
-        transition: .5s;
-        animation: slide-in-elliptic-top-fwd 0.9s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
+                .center .login .login-button:active {
+                    transform: scale(0.95);
+                }
 
     button {
         cursor: pointer;
@@ -206,155 +128,71 @@
         transition: .5s;
         height: 40px !important;
     }
+
     #tab-login {
-        padding:15px;
+        padding: 15px;
     }
-    #tab-signup {
-        display:none;
-        padding:15px;
-    }
+
     #btn-login {
         background: #1382c7;
     }
+
     .msg-stt.ok {
-        color:blue;
+        color: blue;
     }
 </style>
-
-<div class="center">
-    <div class="login-register-title" style="text-align:center; margin-bottom: 20px;">
-        <h2 style="font-family: Arial, sans-serif; color: #243946;">Đăng Nhập / Đăng Ký</h2>
+</head>
+<body>
+    <div class="center">
+        <div class="login-register-title" style="text-align:center; margin-bottom: 20px;">
+            <h2 style="font-family: Arial, sans-serif; color: #243946;">Đăng Nhập</h2>
+        </div>
+        <form class="login" autocomplete="off" novalidate>
+            <p class="msg-stt"></p>
+            <div id="tab-login">
+                <input autocomplete="off" name="hidden" type="text" style="display:none;">
+                <label>
+                    <div class="fa fa-phone"></div>
+                    <input class="username" type="text" name="email" autocomplete="off" id="e1" placeholder="Email" required />
+                </label>
+                <label>
+                    <div class="fa fa-commenting"></div>
+                    <input class="password" type="password" name="password" autocomplete="off" id="ps1" placeholder="Mật khẩu" required />
+                </label>
+            </div>
+            <button class="login-button" type="submit" id="btn-login">Đăng Nhập</button>
+        </form>
     </div>
-    <form class="login" autocomplete="off" novalidate>
-        <p class="msg-stt"></p>
-        <div id="tab-login">
-            <input autocomplete="off" name="hidden" type="text" style="display:none;">
-            <label>
-                <div class="fa fa-phone"></div>
-                <input class="username" type="text" name="email" autocomplete="off" id="e1" placeholder="Email" required />
-            </label>
-            <label>
-                <div class="fa fa-commenting"></div>
-                <input class="password" type="password" name="password" autocomplete="off" id="ps1" placeholder="Mật khẩu" required />
-            </label>
-        </div>
-        <div id="tab-signup">
-            <input autocomplete="off" name="hidden" type="text" style="display:none;">
-            <label>
-                <div class="fa fa-phone"></div>
-                <input class="username" type="text" name="hoten" autocomplete="off" placeholder="Họ và tên" required id="hoten" />
-            </label>
-            <label>
-                <div class="fa fa-phone"></div>
-                <input class="username" type="text" name="email" autocomplete="off" placeholder="Email" required id="email" />
-            </label>
-            <label>
-                <div class="fa fa-commenting"></div>
-                <input class="password" type="password" name="pass" autocomplete="off" placeholder="Mật khẩu" required id="p1" />
-            </label>
-            <label>
-                <div class="fa fa-commenting"></div>
-                <input class="password" type="password" name="pass2" autocomplete="off" placeholder="Nhập lại mật khẩu" required id="p2" />
-            </label>
-        </div>
-        <button class="login-button" type="submit" id="btn-login">Đăng Nhập</button>
-        <p style="text-align:center">Hoặc</p>
-        <button class="login-button" id="btn-signup">Đăng Ký Tài Khoản Mới</button>
-    </form>
 
     <script>
         $(document).ready(function () {
-            var is_signup = false;
-
-            $("#btn-signup").click(function (e) {
-                e.preventDefault();
-                if (!is_signup) {
-                    $("#tab-signup").show(1000);
-                    $("#tab-login").hide();
-                    is_signup = true;
-                }
-                else {
-                    var hoten = $("#hoten").val();
-                    var e = $("#email").val();
-                    var p1 = $("#p1").val();
-                    var p2 = $("#p2").val();
-
-                    if (e.trim() == "" || hoten.trim() == "" || p1.trim() == "" || p2.trim() == "") {
-                        $(".msg-stt").text("Vui lòng nhập đủ thông tin!");
-                    }
-                    else
-                        if (p1 != p2) {
-                            $(".msg-stt").text("Mật khẩu bạn nhập không khớp!");
-                        }
-                    else {
-                        $.ajax({
-                            url: '@Url.Action("","SignUp")',
-                            type: 'post',
-                            dataType: 'json',
-                            data: { hoten: hoten, email: e, pass: p1 },
-                             success: function (res) {
-                                 console.log(res)
-                                 if (res.stt_code == 200) {
-                                     $(".msg-stt")
-                                         .addClass("ok")
-                                         .text(res.messeage)
-                                 }
-                                 else {
-                                     $(".msg-stt")
-                                         .text(res.messeage)
-                                     var rel = function () {
-                                         location.reload();
-                                     }
-
-                                     setTimeout(rel,1000)
-                                 }
-                                }
-                                , error: function (error) {
-                                    $(".msg-stt").text("Lỗi truy xuất dữ liệu !", error);
-                                }
-                        })
-                    }
-                }
-
-            })
-
             $("#btn-login").click(function (e) {
                 e.preventDefault();
-                if (is_signup) {
-                    $("#tab-signup").hide(1000);
-                    $("#tab-login").show(500);
-                    is_signup = false;
-                }
-                else {
-                    var u = $("#e1").val();
-                    var p = $("#ps1").val();
-                    if (u.trim() == ""){
-                        $(".msg-stt").text("Vui lòng nhập email !");
-                    }
-                    else
-                        if (p.trim() == "") {
-                            $(".msg-stt").text("Vui lòng nhập password !");
+                var u = $("#e1").val();
+                var p = $("#ps1").val();
+                if (u.trim() == "") {
+                    $(".msg-stt").text("Vui lòng nhập email !");
+                } else if (p.trim() == "") {
+                    $(".msg-stt").text("Vui lòng nhập password !");
+                } else {
+                    $(".msg-stt").text('');
+                    $.ajax({
+                        url: '@Url.Action("","Login")',
+                        type: 'post',
+                        data: { email: u, password: p },
+                        dataType: 'json',
+                        success: function (res) {
+                            console.log(res);
+                            $(".msg-stt").text(res.messeage);
+                            if (res.stt_code == 200) {
+                                location.href = "@Url.Action("","Home")";
+                            }
+                        },
+                        error: function (error) {
+                            $(".msg-stt").text("Lỗi truy xuất dữ liệu !", error);
                         }
-                    else {
-                            $(".msg-stt").text('')
-                            $.ajax({
-                                url: '@Url.Action("","Login")',
-                                type: 'post',
-                                data: { email: u, password: p },
-                                dataType: 'json',
-                                success: function (res) {
-                                    console.log(res)
-                                    $(".msg-stt").text(res.messeage)
-                                    if (res.stt_code == 200) {
-                                        location.href = "@Url.Action("","Home")";
-                                    }
-                                }
-                                , error: function (error) {
-                                    $(".msg-stt").text("Lỗi truy xuất dữ liệu !", error);
-                                }
-                            })
-                    }
+                    });
                 }
-            })
-        })
+            });
+        });
     </script>
