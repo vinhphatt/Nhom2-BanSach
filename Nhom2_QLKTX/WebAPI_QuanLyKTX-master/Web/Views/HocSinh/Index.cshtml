@@ -1,25 +1,31 @@
-﻿@model IEnumerable<Web.Models.HOCSINH>
+@model IEnumerable<Web.Models.HOCSINH>
 @{
     ViewBag.Title = "Danh sách học sinh";
     Layout = "~/Views/Shared/MainLayout.cshtml";
     int Stt = ViewBag.I;
 }
 
-
 <h2 class="display-6 text-capitalize lb-page">Danh sách các học sinh @(ViewBag.Stt!=null?ViewBag.Stt==true?"chưa được xếp phòng":"đã xóa khỏi phòng":"đã được xếp phòng")</h2>
 @{
-    if (ViewBag.Stt!= null && ViewBag.Stt == true)
+    if (ViewBag.Stt != null && ViewBag.Stt == true)
     {
         <a class="btn mb-2 add-new" e-type="create" href="#" style="background-color: rgb(154, 192, 173)"><i class="fa-solid fa-plus"></i> Thêm mới</a>
     }
 }
 
-<form action="/hocsinh/theanh" method="get">
-    <input type="text" name="timkiem" required/>
-    <button type="submit">Tìm kiếm</button>
-</form>
+<!-- Thêm danh sách dropdown cho các phòng -->
+<div class="mb-3">
+    <select id="filterRoom" class="form-select">
+        <option value="">Tất cả phòng</option>
+        @foreach (var room in ViewBag.Rooms as List<Web.Models.PHONG>)
+        {
+            <option value="@room.tenphong">@room.tenphong</option>
+        }
+    </select>
+</div>
+
 <br />
-<table class="table table-striped  text-capitalize">
+<table class="table table-striped text-capitalize" id="studentTable">
     <thead>
         <tr>
             <th scope="col">STT</th>
@@ -50,7 +56,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr data-room="@(item.PHONG != null ? item.PHONG.tenphong : "")">
                 <td>
                     @(Stt++)
                 </td>
@@ -64,7 +70,7 @@
                     @Html.DisplayFor(modelItem => item.quequan)
                 </td>
                 <td>
-                    @(item.gioitinh==true? "Nam":"Nữ")
+                    @(item.gioitinh == true ? "Nam" : "Nữ")
                 </td>
                 <td>
                     @Html.DisplayFor(m => item.lop)
@@ -78,7 +84,7 @@
                 <td>
                     @if (ViewBag.Stt == true)
                     {
-                        <a e-id="@item.mahs" e-type="set" href="@Url.Action("XepPhong", new { id=item.mahs})" class="btn text-white" style="background-color: rgb(115, 144, 166) "><i class="fa-solid fa-person-shelter"></i> Xếp phòng</a>
+                        <a e-id="@item.mahs" e-type="set" href="@Url.Action("XepPhong", new { id = item.mahs })" class="btn text-white" style="background-color: rgb(115, 144, 166) "><i class="fa-solid fa-person-shelter"></i> Xếp phòng</a>
                         <i class="fa-brands fa-squarespace fs-5"></i>
                     }
                     <a e-id="@item.mahs" e-type="edit" class="btn bg-secondary text-white"><i class="fa-solid fa-pen-to-square"></i> Sửa</a>
@@ -90,4 +96,20 @@
     </tbody>
 </table>
 
-
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#filterRoom").change(function () {
+                var filterValue = $(this).val().toLowerCase();
+                $("#studentTable tbody tr").each(function () {
+                    var roomName = $(this).data("room").toLowerCase();
+                    if (filterValue === "" || roomName === filterValue) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+}
