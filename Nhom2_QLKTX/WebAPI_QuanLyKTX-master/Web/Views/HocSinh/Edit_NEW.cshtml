@@ -1,4 +1,4 @@
-﻿@model Web.Models.HOCSINH_NEW
+@model Web.Models.HOCSINH_NEW
 @using Web.Models;
 @{
     ViewBag.Title = "Sửa thông tin";
@@ -7,7 +7,7 @@
 
 <h2 class="hi"><i class="fa-solid fa-person-circle-exclamation"></i> Thông tin</h2>
 
-@using (Html.BeginForm("EditNew","HocSinh"))
+@using (Html.BeginForm("EditNew", "HocSinh"))
 {
     @Html.AntiForgeryToken()
 
@@ -16,7 +16,7 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.mahs)
-
+        @Html.HiddenFor(model => model.matk) <!-- Thêm dòng này -->
 
         <div class="form-group">
             @Html.LabelFor(model => model.hoten, "Họ và tên", htmlAttributes: new { @class = "control-label col-md-2" })
@@ -78,5 +78,5 @@
 }
 
 <div>
-    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index",new {stt=true})
+    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index", new { stt = true })
 </div>
