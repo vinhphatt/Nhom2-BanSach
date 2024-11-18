@@ -93,11 +93,11 @@
                 else
                 { <!-- Student Menu (Non-Admin) -->
                     <li class="mn-li">
-                        <a href="@Url.Action("", "Phong")" class="nav-link mb-1">
-                            <i class="fa-solid fa-door-closed me-2" style="font-size: 16px;"></i> <!-- Icon for Room Info -->
-                            Xem thông tin phòng
-                        </a>
-                    </li>
+      <a href="@Url.Action("Details", "Phong", new { id = Session["maphong"] })" class="nav-link mb-1">
+          <i class="fa-solid fa-door-closed me-2" style="font-size: 16px;"></i> <!-- Icon for Room Info -->
+          Xem thông tin phòng
+      </a>
+  </li>
 
                     <li class="mn-li">
                         <a href="@Url.Action("", "HoaDon")" class="nav-link mb-1">
