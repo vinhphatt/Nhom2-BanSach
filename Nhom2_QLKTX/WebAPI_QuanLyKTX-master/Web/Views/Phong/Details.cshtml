@@ -1,10 +1,9 @@
-﻿@model Web.Models.PHONG
+@model Web.Models.PHONG
 
 @{
     ViewBag.Title = "Thông tin phòng";
     Layout = "~/Views/Shared/MainLayout.cshtml";
 }
-
 
 <h2 class="hi"><i class="fa-solid fa-house-chimney"></i> Thông tin </h2>
 
@@ -23,20 +22,23 @@
         </dt>
     </dl>
 </div>
+
 @if (Model.HOCSINHs.Count > 0)
 {
-<div class="row sample-row">
-    @foreach (var item in Model.HOCSINHs.ToList())
-    {
-        <a href="@Url.Action("Details","HocSinh", new {id=item.mahs, call_back_url=Request.Url.ToString()})" class="col-xs-12 col-sm-6 col-md-3 gutter-margin-xs-sm gutter-margin-sm-md">
-            <div class="inner"><i class="fa-regular fa-circle-user"></i> @item.hoten</div>
-        </a>
-    }
-</div>
+    <div class="row sample-row">
+        @foreach (var item in Model.HOCSINHs.ToList())
+        {
+            <a href="@Url.Action("Details", "HocSinh", new { id = item.mahs, call_back_url = Request.Url.ToString() })" class="col-xs-12 col-sm-6 col-md-3 gutter-margin-xs-sm gutter-margin-sm-md">
+                <div class="inner"><i class="fa-regular fa-circle-user"></i> @item.hoten</div>
+            </a>
+        }
+    </div>
 }
 
-
-<p>
-    <i class="fa-regular fa-square-caret-left"></i> 
-    @Html.ActionLink("Quay lại", "Index")
-</p>
+@if (Session["isAdmin"] != null && (bool)Session["isAdmin"])
+{
+    <p>
+        <i class="fa-regular fa-square-caret-left"></i>
+        @Html.ActionLink("Quay lại", "Index")
+    </p>
+}
