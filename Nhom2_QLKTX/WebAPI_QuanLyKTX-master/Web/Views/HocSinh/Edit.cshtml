@@ -37,7 +37,7 @@
                         <select id="maphong" name="maphong">
                             @foreach (var i in list_phong.ToList())
                             {
-                                <option value="@i.maphong" @(i.maphong == Model.maphong ? "selected" : "")>@list_phong.FirstOrDefault(x => x.maphong == i.maphong).tenphong</option>
+                                <option value="@i.maphong" @(i.maphong == Model.maphong ? "selected" : "")>@list_phong.FirstOrDefault(x => x.maphong == i.maphong).tenphong (@i.HOCSINHs.Count/@i.tsogiuong)</option>
                             }
                         </select>
                     }
