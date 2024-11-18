@@ -1,16 +1,18 @@
-﻿@model Web.Models.PHIEU_DIENNUOC
+@model Web.Models.PHIEU_DIENNUOC
 @{
     ViewBag.Title = "Thêm phiếu";
     Layout = "~/Views/Shared/MainLayout.cshtml";
 
+    // Đặt giá trị mặc định cho giá điện và giá nước
+    Model.giadien = 2000; // Giá điện mặc định là 2000 VND/kWh
+    Model.gianuoc = 10000; // Giá nước mặc định là 10000 VND/M^3
 }
-
 
 <h2 class="hi"><i class="fa-solid fa-money-check"></i> Thông tin</h2>
 
 @{
     var db = new Web.Models.Context();
-    var list_phong = db.PHONGs;
+    var list_phong = db.PHONGs.Where(p => p.tinhtrang == true).ToList();
 }
 @using (Html.BeginForm())
 {
@@ -25,7 +27,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ngaytaophieu, "Ngày tạo phiếu", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ngaytaophieu, new { htmlAttributes = new { @class = "form-control", Value=DateTime.Now, @Readonly="true" } })
+                @Html.EditorFor(model => model.ngaytaophieu, new { htmlAttributes = new { @class = "form-control", Value = DateTime.Now, @Readonly = "true" } })
                 @Html.ValidationMessageFor(model => model.ngaytaophieu, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -56,7 +58,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.giadien, "Giá điện (VND/kWh)", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.giadien, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextBoxFor(model => model.giadien, new { @class = "form-control", @readonly = "true" })
                 @Html.ValidationMessageFor(model => model.giadien, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -70,7 +72,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.gianuoc, "Giá nước (VND/M^3)", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.gianuoc, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextBoxFor(model => model.gianuoc, new { @class = "form-control", @readonly = "true" })
                 @Html.ValidationMessageFor(model => model.gianuoc, "", new { @class = "text-danger" })
             </div>
         </div>
