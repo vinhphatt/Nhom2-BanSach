@@ -1,11 +1,11 @@
-﻿@model Web.Models.TAIKHOAN
+@model Web.Models.TAIKHOAN
 
 @{
     ViewBag.Title = "Sửa tài khoản";
     Layout = "~/Views/Shared/MainLayout.cshtml";
 }
 
-<h2 class="hi"><i class="fas fa-user-circle"></i> Thông tin tài khoản</h2>
+<h2 class="hi"><i class="fas fa-user-circle"></i> Thông tin</h2>
 
 @using (Html.BeginForm())
 {
@@ -18,52 +18,81 @@
 
         <p class="msg-stt">@ViewBag.Msg</p>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.hoten, "Họ tên", htmlAttributes: new { @class = "control-label col-md-2" })
+        <!-- Thêm các trường từ HOCSINH_NEW -->
+        <div class="form-group">
+            @Html.Label("hoten", "Họ tên học sinh", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.hoten, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.hoten, "", new { @class = "text-danger" })
+                @Html.Editor("hoten", new { htmlAttributes = new { @class = "form-control" } })
             </div>
         </div>
 
-        <div class="form-group row">
+        <div class="form-group">
+            @Html.Label("ngaysinh", "Ngày sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="date" name="ngaysinh" class="form-control text-box single-line" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("gioitinh", "Giới tính", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select class="list-box tri-state" id="gioitinh" name="gioitinh">
+                    <option value="true">Nam</option>
+                    <option value="false">Nữ</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
             @Html.LabelFor(model => model.email, "Email", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <p class="form-control-static">@Model.email</p>
-                @Html.HiddenFor(model => model.email)  <!-- Trường ẩn để giữ dữ liệu email -->
+                @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group row">
-            <!-- Thêm class row -->
-            @Html.LabelFor(model => model.pass, "Password", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="form-group">
+            <label for="pass" class="control-label col-md-2">
+                Password
+                <span toggle="#pass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+            </label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.pass, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.pass, new { htmlAttributes = new { @class = "form-control", type = "password", id = "pass" } })
                 @Html.ValidationMessageFor(model => model.pass, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.cvu, "Chức vụ", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="form-group">
+            <label for="confirmPass" class="control-label col-md-2">
+                Xác thực mật khẩu
+                <span toggle="#confirmPass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+            </label>
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.cvu,
-                    new SelectList(new List<SelectListItem>
-                    {
-                        new SelectListItem { Value = "ADMIN", Text = "ADMIN" },
-                        new SelectListItem { Value = "Học Sinh", Text = "Học Sinh" }
-                    }, "Value", "Text", Model.cvu),
-                    "Chọn chức vụ",
-                    new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.cvu, "", new { @class = "text-danger" })
+                @Html.Editor("confirmPass", new { htmlAttributes = new { @class = "form-control", type = "password", id = "confirmPass" } })
+                @Html.ValidationMessage("confirmPass", "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Lưu thông tin" class="btn btn-primary" style="background-color: #aa90b1; border: none; color: white;" />
-                @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary", @style = "margin-left:10px;" })
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
+
+<div>
+    <i class="fa-regular fa-square-caret-left"></i> @Html.ActionLink("Quay lại", "Index")
+</div>
+
+<script>
+    $(".toggle-password").click(function () {
+        $(this).toggleClass("fa-eye fa-eye-slash");
+        var input = $($(this).attr("toggle"));
+        if (input.attr("type") == "password") {
+            input.attr("type", "text");
+        } else {
+            input.attr("type", "password");
+        }
+    });
+</script>
