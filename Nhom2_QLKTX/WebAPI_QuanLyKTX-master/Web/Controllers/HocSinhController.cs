@@ -169,93 +169,64 @@ namespace Web.Controllers
             
         }
 
-        [CheckUserSession]
-        public ActionResult XepPhong(int? id)
-        {
-            if (id != null)
-            {
-                var o = db.HOCSINH_NEW.FirstOrDefault(x => x.mahs == id);
-                if (o != null)
-                {
-                    var list_phong = db.PHONGs.Where(x => x.HOCSINHs.Count < 10).ToList();
-                    ViewBag.Hoc_Sinh = o;
-                    ViewBag.List_Phong = list_phong;
-                    return View();
-                }
-                else
-                {
-                    ViewBag.Code = 404;
-                    ViewBag.Msg = "ID học sinh không tồn tại";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
-            }
-            else
-            {
-                return RedirectToAction("Index", new { stt = true });
-            }
-        }
+       [CheckUserSession]
+  [HttpPost]
+  public ActionResult XepPhong(int mahs, int maphong)
+  {
+      var hs = db.HOCSINH_NEW.FirstOrDefault(x => x.mahs == mahs);
+      var p = db.PHONGs.FirstOrDefault(x => x.maphong == maphong);
+      if (hs != null)
+      {
+          if (p != null)
+          {
+              if (p.HOCSINHs.Count >= 10)
+              {
+                  return RedirectToAction("Index", new { stt = true, msg = "Phòng này đã đủ người!" });
+              }
+              else
+              {
+                  var _in = new HOCSINH
+                  {
+                      maphong = maphong,
+                      hoten = hs.hoten,
+                      ngaysinh = hs.ngaysinh,
+                      gioitinh = hs.gioitinh,
+                      lop = hs.lop,
+                      ttphuhuynh = hs.ttphuhuynh,
+                      quequan = hs.quequan,
+                      matk = hs.matk // Thêm matk vào HOCSINH
+                  };
 
-        [CheckUserSession]
-        [HttpPost]
-        public ActionResult XepPhong(int mahs, int maphong)
-        {
-            var hs = db.HOCSINH_NEW.FirstOrDefault(x => x.mahs == mahs);
-            var p = db.PHONGs.FirstOrDefault(x => x.maphong == maphong);
-            if (hs != null)
-            {
-                if (p != null)
-                {
-                    if (p.HOCSINHs.Count >= p.tsogiuong) // Kiểm tra số giường của phòng
-                    {
-                        return RedirectToAction("Index", new { stt = true, msg = "Phòng này đã đủ người!" });
-                    }
-                    else
-                    {
-                        var _in = new HOCSINH
-                        {
-                            maphong = maphong,
-                            hoten = hs.hoten,
-                            ngaysinh = hs.ngaysinh,
-                            gioitinh = hs.gioitinh,
-                            lop = hs.lop,
-                            ttphuhuynh = hs.ttphuhuynh,
-                            quequan = hs.quequan,
-                        };
+                  db.HOCSINHs.Add(_in);
+                  db.HOCSINH_NEW.Remove(hs);
+                  var stt = db.SaveChanges();
+                  var _msg = "";
+                  if (stt > 0)
+                  {
+                      _msg = "Xếp phòng thành công!";
+                  }
+                  else
+                  {
+                      _msg = "Lỗi!";
+                  }
 
-                        db.HOCSINHs.Add(_in);
-                        db.HOCSINH_NEW.Remove(hs);
-                        var stt = db.SaveChanges();
-                        var _msg = "";
-                        if (stt > 0)
-                        {
-                            // Cập nhật tình trạng phòng
-                            p.tinhtrang = p.HOCSINHs.Count > 0;
-                            db.SaveChanges();
-
-                            _msg = "Xếp phòng thành công!";
-                        }
-                        else
-                        {
-                            _msg = "Lỗi!";
-                        }
-
-                        return RedirectToAction("Index", new { stt = true, msg = _msg });
-                    }
-                }
-                else
-                {
-                    ViewBag.Msg = "ID phòng không tồn tại";
-                    ViewBag.Code = 404;
-                    return View("~/Views/Shared/Error.cshtml");
-                }
-            }
-            else
-            {
-                ViewBag.Msg = "ID học sinh không tồn tại";
-                ViewBag.Code = 404;
-                return View("~/Views/Shared/Error.cshtml");
-            }
-        }
+                  return RedirectToAction("Index", new { stt = true, msg = _msg });
+              }
+          }
+          else
+          {
+              ViewBag.Msg = "ID phòng không tồn tại";
+              ViewBag.Code = 404;
+              return View("~/Views/Shared/Error.cshtml");
+          }
+      }
+      else
+      {
+          ViewBag.Msg = "ID học sinh không tồn tại";
+          ViewBag.Code = 404;
+          return View("~/Views/Shared/Error.cshtml");
+      }
+  }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -404,56 +375,72 @@ namespace Web.Controllers
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(HOCSINH e)
-        {
-            using (var client = new HttpClient())
-            {
-                var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("edit", "HOCSINH", new { httproute = "DefaultApi" });
-                var _url = _host + _api;
-                var responseTask = client.PutAsJsonAsync<HOCSINH>(_url, e);
-                responseTask.Wait();
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewBag.Msg = result.ReasonPhrase;
-                    ViewBag.Url_Error = _url;
-                    ViewBag.Code = (int)result.StatusCode;
-                    return RedirectToAction("Index", new { msg = ViewBag.Msg });
-                }
-            }
-        }
+   [ValidateAntiForgeryToken]
+   public ActionResult EditNew(HOCSINH_NEW e)
+   {
+       using (var client = new HttpClient())
+       {
+           var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
+           var _api = Url.Action("edit", "HOCSINH", new { httproute = "DefaultApi" }) + "/new/";
+           var _url = _host + _api;
+           var responseTask = client.PutAsJsonAsync<HOCSINH_NEW>(_url, e);
+           responseTask.Wait();
+           var result = responseTask.Result;
+           if (result.IsSuccessStatusCode)
+           {
+               // Cập nhật thông tin tương ứng trong TAIKHOAN
+               var taiKhoan = db.TAIKHOANs.FirstOrDefault(x => x.matk == e.matk);
+               if (taiKhoan != null)
+               {
+                   taiKhoan.hoten = e.hoten;
+                   db.SaveChanges();
+               }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditNew(HOCSINH_NEW e)
-        {
-            using (var client = new HttpClient())
-            {
-                var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("edit", "HOCSINH", new { httproute = "DefaultApi" })+"/new/";
-                var _url = _host + _api;
-                var responseTask = client.PutAsJsonAsync<HOCSINH_NEW>(_url, e);
-                responseTask.Wait();
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index", new {stt="True"});
-                }
-                else
-                {
-                    ViewBag.Msg = result.ReasonPhrase;
-                    ViewBag.Url_Error = _url;
-                    ViewBag.Code = (int)result.StatusCode;
-                    return RedirectToAction("Index", new { msg = ViewBag.Msg });
-                }
-            }
-        }
+               return RedirectToAction("Index", new { stt = "True" });
+           }
+           else
+           {
+               ViewBag.Msg = result.ReasonPhrase;
+               ViewBag.Url_Error = _url;
+               ViewBag.Code = (int)result.StatusCode;
+               return RedirectToAction("Index", new { msg = ViewBag.Msg });
+           }
+       }
+   }
+
+   [HttpPost]
+   [ValidateAntiForgeryToken]
+   public ActionResult Edit(HOCSINH e)
+   {
+       using (var client = new HttpClient())
+       {
+           var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
+           var _api = Url.Action("edit", "HOCSINH", new { httproute = "DefaultApi" });
+           var _url = _host + _api;
+           var responseTask = client.PutAsJsonAsync<HOCSINH>(_url, e);
+           responseTask.Wait();
+           var result = responseTask.Result;
+           if (result.IsSuccessStatusCode)
+           {
+               // Cập nhật thông tin tương ứng trong TAIKHOAN
+               var taiKhoan = db.TAIKHOANs.FirstOrDefault(x => x.matk == e.matk);
+               if (taiKhoan != null)
+               {
+                   taiKhoan.hoten = e.hoten;
+                   db.SaveChanges();
+               }
+
+               return RedirectToAction("Index");
+           }
+           else
+           {
+               ViewBag.Msg = result.ReasonPhrase;
+               ViewBag.Url_Error = _url;
+               ViewBag.Code = (int)result.StatusCode;
+               return RedirectToAction("Index", new { msg = ViewBag.Msg });
+           }
+       }
+   }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
