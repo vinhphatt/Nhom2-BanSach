@@ -80,6 +80,7 @@ namespace Web.Controllers
             }
         }
 
+      
         [CheckUserSession]
         public ActionResult Details(int? id)
         {
@@ -87,12 +88,14 @@ namespace Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PHONG e = db.PHONGs.Find(id);
-            if (e == null)
+
+            PHONG phong = db.PHONGs.Find(id);
+            if (phong == null)
             {
                 return HttpNotFound();
             }
-            return View(e);
+
+            return View(phong);
         }
 
         [CheckUserSession]
