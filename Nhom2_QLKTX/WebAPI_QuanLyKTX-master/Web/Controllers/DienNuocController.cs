@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -152,9 +152,14 @@ namespace Web.Controllers
         [CheckUserSession]
         public ActionResult Create()
         {
-            return View();
+            var model = new PHIEU_DIENNUOC
+            {
+                ngaytaophieu = DateTime.Now,
+                giadien = 2000, // Giá điện mặc định là 2000 VND/kWh
+                gianuoc = 10000 // Giá nước mặc định là 10000 VND/M^3
+            };
+            return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
