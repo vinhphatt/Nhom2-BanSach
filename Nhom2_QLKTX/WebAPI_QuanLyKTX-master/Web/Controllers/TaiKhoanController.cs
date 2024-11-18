@@ -75,109 +75,150 @@ namespace Web.Controllers
         }
 
         [CheckUserSession]
-        public ActionResult Create()
-        {
-            return View();
-        }
+ public ActionResult Create()
+ {
+     return View();
+ }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "matk,hoten,email,pass,cvu")] TAIKHOAN e)
-        {
-            var exist = db.TAIKHOANs.FirstOrDefault(x => x.email == e.email);
-            if (exist != null)
-            {
-                ViewBag.Msg = "Email đã tồn tại, vui lòng chọn email khác!";
-                return View();
-            }
-            using (var client = new HttpClient())
-            {
-                var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("post", "taikhoan", new { httproute = "DefaultApi" });
-                var _url = _host + _api;
+ [HttpPost]
+ [ValidateAntiForgeryToken]
+ public ActionResult Create([Bind(Include = "matk,hoten,email,pass")] TAIKHOAN e, string hoten, DateTime? ngaysinh, string gioitinh, string confirmPass)
+ {
+     if (e.pass != confirmPass)
+     {
+         ViewBag.Msg = "Mật khẩu và xác thực mật khẩu không khớp!";
+         return View();
+     }
 
-                var postTask = client.PostAsJsonAsync<TAIKHOAN>(_url, e);
-                postTask.Wait();
+     var exist = db.TAIKHOANs.FirstOrDefault(x => x.email == e.email);
+     if (exist != null)
+     {
+         ViewBag.Msg = "Email đã tồn tại, vui lòng chọn email khác!";
+         return View();
+     }
 
-                var result = postTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewBag.Msg = result.ReasonPhrase;
-                    ViewBag.Url_Error = _url;
-                    ViewBag.Code = (int)result.StatusCode;
-                    return View("~/Views/Shared/Error.cshtml");
-                }
-            }
-        }
+     // Gán mặc định cvu là "Học Sinh"
+     e.cvu = "Học Sinh";
 
-        [CheckUserSession]
-        [HttpGet]
-        public ActionResult Edit(int? id)
-        {
-            using (var client = new HttpClient())
-            {
-                var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("get", "taikhoan", new { httproute = "DefaultApi", id = id });
-                var _url = _host + _api;
-                var responseTask = client.GetAsync(_url);
-                responseTask.Wait();
+     using (var client = new HttpClient())
+     {
+         var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
+         var _api = Url.Action("post", "taikhoan", new { httproute = "DefaultApi" });
+         var _url = _host + _api;
 
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readTask = result.Content.ReadAsAsync<TAIKHOAN>();
-                    readTask.Wait();
-                    var e = readTask.Result;
-                    return View(e);
-                }
-                else
-                {
-                    ViewBag.Msg = result.ReasonPhrase;
-                    ViewBag.Url_Error = _url;
-                    ViewBag.Code = (int)result.StatusCode;
-                    return View("~/Views/Shared/Error.cshtml");
-                }
-            }
-        }
+         var postTask = client.PostAsJsonAsync<TAIKHOAN>(_url, e);
+         postTask.Wait();
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "matk,hoten,email,pass,cvu")] TAIKHOAN e)
-        {
-            var exist = db.TAIKHOANs.FirstOrDefault(x => x.email == e.email);
-            if (exist != null) // Kiểm tra xem exist có phải là null không
-            {
-                if (exist.matk != e.matk)
-                {
-                    ViewBag.Msg = "Email đã tồn tại, vui lòng chọn email khác!";
-                    return View();
-                }
-            }
-            using (var client = new HttpClient())
-            {
-                var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("edit", "taikhoan", new { httproute = "DefaultApi" });
-                var _url = _host + _api;
-                var responseTask = client.PutAsJsonAsync<TAIKHOAN>(_url, e);
-                responseTask.Wait();
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewBag.Msg = result.ReasonPhrase;
-                    ViewBag.Url_Error = _url;
-                    ViewBag.Code = (int)result.StatusCode;
-                    return RedirectToAction("Index", new { msg = ViewBag.Msg });
-                }
-            }
-        }
+         var result = postTask.Result;
+         if (result.IsSuccessStatusCode)
+         {
+             // Lấy matk từ kết quả trả về
+             var createdTaiKhoan = result.Content.ReadAsAsync<TAIKHOAN>().Result;
+             var matk = createdTaiKhoan.matk;
+
+             // Kiểm tra các trường không được null
+             if (string.IsNullOrEmpty(hoten) || !ngaysinh.HasValue || string.IsNullOrEmpty(gioitinh))
+             {
+                 ViewBag.Msg = "Vui lòng điền đầy đủ thông tin học sinh!";
+                 return View();
+             }
+
+             // Thêm dữ liệu vào bảng HOCSINH_NEW
+             var newHocSinhNew = new HOCSINH_NEW
+             {
+                 hoten = hoten,
+                 ngaysinh = ngaysinh,
+                 gioitinh = gioitinh == "true", // Giả sử giới tính là "true" hoặc "false"
+                 matk = matk // Thêm matk vào HOCSINH_NEW
+             };
+
+             db.HOCSINH_NEW.Add(newHocSinhNew);
+             db.SaveChanges();
+
+             return RedirectToAction("Index");
+         }
+         else
+         {
+             ViewBag.Msg = result.ReasonPhrase;
+             ViewBag.Url_Error = _url;
+             ViewBag.Code = (int)result.StatusCode;
+             return View("~/Views/Shared/Error.cshtml");
+         }
+     }
+ }
+
+ [CheckUserSession]
+ [HttpGet]
+ public ActionResult Edit(int? id)
+ {
+     using (var client = new HttpClient())
+     {
+         var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
+         var _api = Url.Action("get", "taikhoan", new { httproute = "DefaultApi", id = id });
+         var _url = _host + _api;
+         var responseTask = client.GetAsync(_url);
+         responseTask.Wait();
+
+         var result = responseTask.Result;
+         if (result.IsSuccessStatusCode)
+         {
+             var readTask = result.Content.ReadAsAsync<TAIKHOAN>();
+             readTask.Wait();
+             var e = readTask.Result;
+             return View(e);
+         }
+         else
+         {
+             ViewBag.Msg = result.ReasonPhrase;
+             ViewBag.Url_Error = _url;
+             ViewBag.Code = (int)result.StatusCode;
+             return View("~/Views/Shared/Error.cshtml");
+         }
+     }
+ }
+
+ [HttpPost]
+ [ValidateAntiForgeryToken]
+ public ActionResult Edit([Bind(Include = "matk,hoten,email,pass,cvu")] TAIKHOAN e, string hoten, DateTime? ngaysinh, string gioitinh, string confirmPass)
+ {
+     if (e.pass != confirmPass)
+     {
+         ViewBag.Msg = "Mật khẩu và xác thực mật khẩu không khớp!";
+         return View(e);
+     }
+
+     var exist = db.TAIKHOANs.FirstOrDefault(x => x.email == e.email && x.matk != e.matk);
+     if (exist != null)
+     {
+         ViewBag.Msg = "Email đã tồn tại, vui lòng chọn email khác!";
+         return View(e);
+     }
+     e.cvu = "Học Sinh";
+
+     // Cập nhật thông tin tài khoản
+     db.Entry(e).State = EntityState.Modified;
+
+     // Cập nhật thông tin học sinh
+     var hocSinhNew = db.HOCSINH_NEW.FirstOrDefault(x => x.matk == e.matk);
+     if (hocSinhNew != null)
+     {
+         hocSinhNew.hoten = hoten;
+         hocSinhNew.ngaysinh = ngaysinh;
+         hocSinhNew.gioitinh = gioitinh == "true"; // Giả sử giới tính là "true" hoặc "false"
+     }
+
+     var hocSinh = db.HOCSINHs.FirstOrDefault(x => x.matk == e.matk);
+     if (hocSinh != null)
+     {
+         hocSinh.hoten = hoten;
+         hocSinh.ngaysinh = ngaysinh;
+         hocSinh.gioitinh = gioitinh == "true"; // Giả sử giới tính là "true" hoặc "false"
+     }
+
+     db.SaveChanges();
+
+     return RedirectToAction("Index");
+ }
 
         [CheckUserSession]
         [HttpGet]
