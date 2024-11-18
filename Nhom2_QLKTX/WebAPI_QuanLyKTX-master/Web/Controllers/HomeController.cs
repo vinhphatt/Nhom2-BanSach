@@ -68,7 +68,14 @@ namespace Web.Controllers
                     return_id = u.matk;
                     messeage = "Đăng nhập thành công! Đang chuyển hướng!";
                     Session["user_id"] = u.matk;
-                    Session["isAdmin"] = (u.cvu == "ADMIN");  
+                    Session["isAdmin"] = (u.cvu == "ADMIN");
+
+                    // Lấy maphong của người dùng
+                    var student = db.HOCSINHs.FirstOrDefault(s => s.matk == u.matk);
+                    if (student != null)
+                    {
+                        Session["maphong"] = student.maphong;
+                    }
                 }
                 else
                 {
@@ -124,7 +131,6 @@ namespace Web.Controllers
                 return View("~/Shared/Error.cshtml");
             }
         }
-
         [CheckUserSession]
         [HttpPost, Route("ThongTinTaiKhoan")]
         public ActionResult ThongTinTaiKhoan(TAIKHOAN e)
@@ -148,9 +154,28 @@ namespace Web.Controllers
 
                     var stt = db.SaveChanges();
                     if (stt > 0)
+                    {
                         ViewBag.Msg = "Lưu thành công!";
+
+                        // Cập nhật thông tin trong HOCSINH và HOCSINH_NEW
+                        var hocSinh = db.HOCSINHs.FirstOrDefault(s => s.matk == e.matk);
+                        if (hocSinh != null)
+                        {
+                            hocSinh.hoten = e.hoten;
+                            db.SaveChanges();
+                        }
+
+                        var hocSinhNew = db.HOCSINH_NEW.FirstOrDefault(s => s.matk == e.matk);
+                        if (hocSinhNew != null)
+                        {
+                            hocSinhNew.hoten = e.hoten;
+                            db.SaveChanges();
+                        }
+                    }
                     else
+                    {
                         ViewBag.Msg = "Lỗi!";
+                    }
                 }
             }
             else
