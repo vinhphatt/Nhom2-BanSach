@@ -97,60 +97,88 @@ namespace Web.APIs
             return result;
         }      
 
-        [Route("edit/{id}")]
-        [HttpPut]
-        [ResponseType(typeof(void))]
-        public IHttpActionResult Edit(HOCSINH e)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+         [Route("edit/{id}")]
+   [HttpPut]
+   [ResponseType(typeof(void))]
+   public IHttpActionResult Edit(HOCSINH e)
+   {
+       if (!ModelState.IsValid)
+       {
+           return BadRequest(ModelState);
+       }
 
-            db.Entry(e).State = EntityState.Modified;
+       // Đảm bảo rằng matk không bị null
+       if (e.matk == null)
+       {
+           return BadRequest("matk không được null");
+       }
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HOCSINHExists(e.mahs))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+       db.Entry(e).State = EntityState.Modified;
 
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+       try
+       {
+           db.SaveChanges();
 
-        [Route("edit/new")]
-        [HttpPut]
-        [ResponseType(typeof(void))]
-        public IHttpActionResult EditNew(HOCSINH_NEW e)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+           // Cập nhật thông tin trong TAIKHOAN
+           var taikhoan = db.TAIKHOANs.FirstOrDefault(t => t.matk == e.matk);
+           if (taikhoan != null)
+           {
+               taikhoan.hoten = e.hoten; // Cập nhật tên tài khoản nếu cần
+               db.SaveChanges();
+           }
+       }
+       catch (DbUpdateConcurrencyException)
+       {
+           if (!HOCSINHExists(e.mahs))
+           {
+               return NotFound();
+           }
+           else
+           {
+               throw;
+           }
+       }
 
-            db.Entry(e).State = EntityState.Modified;
+       return StatusCode(HttpStatusCode.NoContent);
+   }
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException x)
-            {
-                throw x;
-            }
+   [Route("edit/new")]
+   [HttpPut]
+   [ResponseType(typeof(void))]
+   public IHttpActionResult EditNew(HOCSINH_NEW e)
+   {
+       if (!ModelState.IsValid)
+       {
+           return BadRequest(ModelState);
+       }
 
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+       // Đảm bảo rằng matk không bị null
+       if (e.matk == null)
+       {
+           return BadRequest("matk không được null");
+       }
+
+       db.Entry(e).State = EntityState.Modified;
+
+       try
+       {
+           db.SaveChanges();
+
+           // Cập nhật thông tin trong TAIKHOAN
+           var taikhoan = db.TAIKHOANs.FirstOrDefault(t => t.matk == e.matk);
+           if (taikhoan != null)
+           {
+               taikhoan.hoten = e.hoten; // Cập nhật tên tài khoản nếu cần
+               db.SaveChanges();
+           }
+       }
+       catch (DbUpdateConcurrencyException x)
+       {
+           throw x;
+       }
+
+       return StatusCode(HttpStatusCode.NoContent);
+   }
 
         [Route("edit/old")]
         [HttpPut]
