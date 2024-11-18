@@ -1,4 +1,4 @@
-﻿using OfficeOpenXml;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -75,6 +75,34 @@ namespace Web.Controllers
                 return View("XuatExcel");
             }
         }
+
+        // API trả về danh sách học sinh theo mã phòng
+       
+        public ActionResult GetHocSinhByPhong(string maphong)
+        {
+            // Kiểm tra maphong có được truyền đúng không
+            if (string.IsNullOrEmpty(maphong))
+            {
+                return Json(new { success = false, message = "Không có mã phòng!" }, JsonRequestBehavior.AllowGet);
+            }
+
+            var listHocSinh = db.HOCSINHs
+                                .Where(hs => hs.maphong.ToString() == maphong)
+                                .Select(hs => new {
+                                    hs.mahs,
+                                    hs.hoten
+                                })
+                                .ToList();
+
+            // Kiểm tra dữ liệu có trả về không
+            if (listHocSinh.Count == 0)
+            {
+                return Json(new { success = false, message = "Không tìm thấy học sinh cho phòng này!" }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { success = true, data = listHocSinh }, JsonRequestBehavior.AllowGet);
+        }
+
 
         // GET: HoaDon
         [CheckUserSession]
@@ -196,6 +224,17 @@ namespace Web.Controllers
                     return View("~/Views/Shared/Error.cshtml");
                 }
             }
+        }
+        // Action lấy học sinh theo ID phòng
+        public JsonResult GetStudentsByRoom(int roomId)
+        {
+            // Lấy danh sách học sinh dựa vào maphong (ID phòng)
+            var students = db.HOCSINHs
+                             .Where(s => s.maphong == roomId)  // Kiểm tra maphong trong bảng HOCSINH
+                             .Select(s => new { Id = s.mahs, Name = s.hoten })  // Lấy Id và Name
+                             .ToList();
+
+            return Json(students, JsonRequestBehavior.AllowGet); // Trả về dữ liệu dạng JSON
         }
 
 
