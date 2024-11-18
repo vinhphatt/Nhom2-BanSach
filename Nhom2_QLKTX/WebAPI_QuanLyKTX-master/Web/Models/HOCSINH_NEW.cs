@@ -27,5 +27,10 @@ namespace Web.Models
 
         [StringLength(30)]
         public string lop { get; set; }
+
+        public int? matk { get; set; } // Thêm thuộc tính matk
+
+        [ForeignKey("matk")]
+        public virtual TAIKHOAN TAIKHOAN { get; set; } // Thêm mối quan hệ với TAIKHOAN
     }
 }
