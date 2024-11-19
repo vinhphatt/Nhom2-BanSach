@@ -77,7 +77,7 @@ namespace Web.Controllers
         }
 
         // API trả về danh sách học sinh theo mã phòng
-       
+
         public ActionResult GetHocSinhByPhong(string maphong)
         {
             // Kiểm tra maphong có được truyền đúng không
@@ -104,36 +104,70 @@ namespace Web.Controllers
         }
 
 
-        // GET: HoaDon
         [CheckUserSession]
-        public ActionResult Index(int page = 1, int limit = 10)
+        public ActionResult Index(int page = 1, int limit = 10, string tinhtrang = null)
         {
-
             using (var client = new HttpClient())
             {
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
-                var _api = Url.Action("get", "HOADON", new { httproute = "DefaultApi", limit = limit, page = page });
+                var _api = Url.Action("get", "HOADON", new { httproute = "DefaultApi", limit = limit, page = page, tinhtrang });
                 var _url = _host + _api;
+
                 var responseTask = client.GetAsync(_url);
                 responseTask.Wait();
-                //fetch
+
                 var result = responseTask.Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    var readTask = result.Content.ReadAsAsync<IList<HOADON>>();
+                    var readTask = result.Content.ReadAsAsync<IList<HOADON>>(); // Lấy dữ liệu hóa đơn
                     readTask.Wait();
-                    IEnumerable<HOADON> list = null;
-                    list = readTask.Result;
-                    ViewBag.CurrentPage = page;
-                    var o_list = new Context().HOADONs.ToList();
-                    ViewBag.TotalPage = Math.Ceiling((float)o_list.Count / 10);
-                    ViewBag.TotalPage_List = o_list;
-                    ViewBag.I = 1;
-                    if (ViewBag.CurrentPage > 1)
+                    IEnumerable<HOADON> list = readTask.Result;
+
+                    // Nếu là Admin, không giới hạn hóa đơn theo phòng
+                    if (Session["isAdmin"] != null && (bool)Session["isAdmin"])
                     {
-                        ViewBag.I = (ViewBag.CurrentPage - 1) * 10 + 1; //số thứ tự tiếp theo 
+                        // Lọc theo tình trạng nếu có
+                        if (!string.IsNullOrEmpty(tinhtrang))
+                        {
+                            list = list.Where(h => h.tinhtrang == tinhtrang);
+                        }
                     }
-                    return View(list.ToList());
+                    // Nếu là Học sinh, chỉ hiển thị hóa đơn theo mã phòng của học sinh
+                    else
+                    {
+                        // Lấy mã phòng từ Session (kiểu string)
+                        var maphong = Session["maphong"]?.ToString();
+
+                        if (!string.IsNullOrEmpty(maphong))
+                        {
+                            // Chuyển maphong từ string sang int
+                            if (int.TryParse(maphong, out int maphongInt))
+                            {
+                                // Lọc danh sách hóa đơn theo mã phòng của học sinh
+                                list = list.Where(h => h.PHONG.maphong == maphongInt);
+                            }
+                            else
+                            {
+                                // Trả về View thông báo "Bạn chưa được xếp phòng"
+                                return View("NotAssignedRoom");
+                            }
+                        }
+                        else
+                        {
+                            // Trả về View thông báo "Bạn chưa được xếp phòng"
+                            return View("NotAssignedRoom");
+                        }
+                    }
+
+
+
+                    // Pagination data
+                    ViewBag.CurrentPage = page;
+                    var o_list = db.HOADONs.ToList();
+                    ViewBag.TotalPage = Math.Ceiling((float)o_list.Count / limit);
+                    ViewBag.I = page > 1 ? (page - 1) * limit + 1 : 1;
+
+                    return View(list.ToList()); // Trả về danh sách hóa đơn đã lọc
                 }
                 else
                 {
@@ -144,6 +178,7 @@ namespace Web.Controllers
                 }
             }
         }
+
 
         // GET: HoaDon/Details/5
         [CheckUserSession]
@@ -172,6 +207,11 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(HOADON e)
         {
+            if (string.IsNullOrEmpty(e.tinhtrang))
+            {
+                e.tinhtrang = "Chưa thanh toán"; // Giá trị mặc định
+            }
+
             using (var client = new HttpClient())
             {
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
@@ -195,6 +235,7 @@ namespace Web.Controllers
                 }
             }
         }
+
 
         [CheckUserSession]
         [HttpGet]
@@ -247,8 +288,10 @@ namespace Web.Controllers
                 var _host = Request.Url.Scheme + "://" + Request.Url.Authority;
                 var _api = Url.Action("edit", "HOADON", new { httproute = "DefaultApi" });
                 var _url = _host + _api;
+
                 var responseTask = client.PutAsJsonAsync<HOADON>(_url, e);
                 responseTask.Wait();
+
                 var result = responseTask.Result;
                 if (result.IsSuccessStatusCode)
                 {
@@ -259,10 +302,11 @@ namespace Web.Controllers
                     ViewBag.Msg = result.ReasonPhrase;
                     ViewBag.Url_Error = _url;
                     ViewBag.Code = (int)result.StatusCode;
-                    return RedirectToAction("Index", new { msg = ViewBag.Msg });
+                    return View("~/Views/Shared/Error.cshtml");
                 }
             }
         }
+
 
         [CheckUserSession]
         [HttpGet]
@@ -289,7 +333,45 @@ namespace Web.Controllers
                     return View("~/Views/Shared/Error.cshtml");
                 }
             }
-
         }
+
+
+        [HttpGet]
+        public ActionResult ThanhToan(int id)
+        {
+            // Thêm logic kiểm tra id hợp lệ, ví dụ:
+            var hoaDon = db.HOADONs.Find(id);
+            if (hoaDon == null)
+            {
+                return HttpNotFound(); // Nếu không tìm thấy hóa đơn
+            }
+
+            // Nếu cần, thêm logic xử lý trước khi hiển thị giao diện
+            return View(hoaDon);
+        }
+
+
+        [HttpPost]
+        public ActionResult XacNhanThanhToan(int id)
+        {
+            var hoaDon = db.HOADONs.Find(id);
+
+            if (hoaDon != null && hoaDon.PHONG.maphong == Convert.ToInt32(Session["maphong"]))
+            {
+                // Cập nhật tình trạng hóa đơn thành "Đã thanh toán"
+                hoaDon.tinhtrang = "Đã thanh toán";
+                db.SaveChanges();
+
+                // Chuyển hướng đến danh sách hóa đơn sau khi thanh toán
+                return RedirectToAction("Index", "HoaDon");
+            }
+            else
+            {
+                // Nếu không có quyền thanh toán, chuyển hướng về danh sách hóa đơn
+                return RedirectToAction("Index", "HoaDon");
+            }
+        }
+
+
     }
 }
