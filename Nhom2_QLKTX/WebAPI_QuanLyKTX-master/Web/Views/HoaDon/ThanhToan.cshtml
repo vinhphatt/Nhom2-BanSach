@@ -1,0 +1,22 @@
+﻿@model Web.Models.HOADON
+
+@{
+    ViewBag.Title = "Thanh toán hóa đơn";
+    Layout = "~/Views/Shared/MainLayout.cshtml";  // Đây là layout mặc định của bạn
+}
+
+<h2 class="display-6 text-capitalize lb-page">Thanh toán hóa đơn</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Hóa đơn của phòng: @Model.PHONG.tenphong --- Mã hóa đơn: @Model.mahd</h5>
+        <p><strong>Ngày tạo:</strong> @Model.ngaytao</p>
+        <p><strong>Tổng tiền:</strong> @Model.tongtien</p>
+        <p><strong>Tình trạng:</strong> @Model.tinhtrang</p>
+
+        <!-- Form để thanh toán -->
+        <form method="post" action="@Url.Action("XacNhanThanhToan", "HoaDon", new { id = Model.mahd })">
+            <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
+        </form>
+    </div>
+</div>
