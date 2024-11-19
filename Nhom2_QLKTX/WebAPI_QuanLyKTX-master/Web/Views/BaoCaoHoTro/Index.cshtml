@@ -1,0 +1,63 @@
+@model IEnumerable<Web.Models.BAOCAO_HOTRO>
+
+@{
+    ViewBag.Title = "Quản lý báo cáo - phiếu hỗ trợ";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+    int Stt = ViewBag.I != null ? (int)ViewBag.I : 1;
+    bool isAdmin = Session["isAdmin"] != null && (bool)Session["isAdmin"];
+}
+
+<h2 class="display-6 text-capitalize lb-page">@(isAdmin ? "Danh sách báo cáo - phiếu hỗ trợ" : "Danh sách báo cáo của tôi")</h2>
+
+<style>
+    .lb-page {
+        margin-bottom: 50px;
+    }
+</style>
+
+@if (!isAdmin)
+{
+    <a class="btn mb-2 add-new" href="@Url.Action("Create", "BaoCaoHoTro")" style="background-color: rgb(154, 192, 173)"><i class="fa-solid fa-plus"></i> Tạo báo cáo</a>
+}
+
+<table class="table table-striped text-capitalize">
+    <thead>
+        <tr>
+            <th scope="col">STT</th>
+            @if (isAdmin)
+            {
+                <th scope="col">Học sinh</th>
+            }
+            <th scope="col">Loại báo cáo</th>
+            <th scope="col">Tình trạng</th>
+            <th scope="col">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@(Stt++)</td>
+                @if (isAdmin)
+                {
+                    <td>@Html.DisplayFor(modelItem => item.HOCSINH.hoten)</td>
+                }
+                <td>@Html.DisplayFor(modelItem => item.loai_bao_cao)</td>
+                <td>@(item.da_xu_ly ? "Đã xử lý" : "Chưa xử lý")</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.mabao_cao })" class="btn bg-secondary text-white"><i class="fa-solid fa-eye"></i> Chi tiết</a>
+                    @if (isAdmin)
+                    {
+                        <i class="fa-brands fa-squarespace fs-5"></i>
+
+                        using (Html.BeginForm("Delete", "BaoCaoHoTro", new { id = item.mabao_cao }, FormMethod.Post, new { style = "display:inline;", onsubmit = "return confirm('Bạn có chắc chắn muốn xóa báo cáo này?');" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn text-white" style="background-color: rgb(200, 103, 122)"><i class="fa-solid fa-trash-can"></i> Xóa</button>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
