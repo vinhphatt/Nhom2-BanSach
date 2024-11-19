@@ -33,7 +33,8 @@
 
             <ul class="nav nav-pills flex-column mb-auto">
                 @if (Session["isAdmin"] != null && (bool)Session["isAdmin"])
-                {<!-- Admin Menu -->
+                {
+                    <!-- Admin Menu -->
                     <li class="mn-li">
                         <a class="nav-link mb-1" data-bs-toggle="collapse" data-bs-target="#t1" aria-expanded="false">
                             <i class="fa-solid fa-door-open me-2" style="font-size: 16px;"></i> <!-- Icon for Room Management -->
@@ -89,15 +90,24 @@
                             Quản lý tài khoản
                         </a>
                     </li>
+
+                    <!-- Thêm menu cho quản lý báo cáo - phiếu hỗ trợ -->
+                    <li class="mn-li">
+                        <a href="@Url.Action("Index", "BaoCaoHoTro")" class="nav-link mb-1">
+                            <i class="fa-solid fa-file-alt me-2" style="font-size: 16px;"></i> <!-- Icon for Report Management -->
+                            Quản lý báo cáo - phiếu hỗ trợ
+                        </a>
+                    </li>
                 }
                 else
-                { <!-- Student Menu (Non-Admin) -->
+                {
+                    <!-- Student Menu (Non-Admin) -->
                     <li class="mn-li">
-      <a href="@Url.Action("Details", "Phong", new { id = Session["maphong"] })" class="nav-link mb-1">
-          <i class="fa-solid fa-door-closed me-2" style="font-size: 16px;"></i> <!-- Icon for Room Info -->
-          Xem thông tin phòng
-      </a>
-  </li>
+                        <a href="@Url.Action("Details", "Phong", new { id = Session["maphong"] })" class="nav-link mb-1">
+                            <i class="fa-solid fa-door-closed me-2" style="font-size: 16px;"></i> <!-- Icon for Room Info -->
+                            Xem thông tin phòng
+                        </a>
+                    </li>
 
                     <li class="mn-li">
                         <a href="@Url.Action("", "HoaDon")" class="nav-link mb-1">
@@ -107,9 +117,9 @@
                     </li>
 
                     <li class="mn-li">
-                        <a href="@Url.Action("", "ThongBao")" class="nav-link mb-1">
+                        <a href="@Url.Action("index", "BaoCaoHoTro")" class="nav-link mb-1">
                             <i class="fa-solid fa-bell me-2" style="font-size: 16px;"></i> <!-- Icon for Notifications -->
-                            Thông báo - Phiếu hỗ trợ
+                            Báo cáo - phiếu hỗ trợ
                         </a>
                     </li>
                 }
