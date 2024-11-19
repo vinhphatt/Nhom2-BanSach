@@ -1,0 +1,108 @@
+@model Web.Models.BAOCAO_HOTRO
+
+@{
+    ViewBag.Title = "Chi tiết báo cáo - phiếu hỗ trợ";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+<h2>Chi tiết báo cáo - phiếu hỗ trợ</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Mã báo cáo
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.mabao_cao)
+        </dd>
+
+        <dt>
+            Họ tên học sinh
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HOCSINH.hoten)
+        </dd>
+
+        <dt>
+            Nội dung báo cáo
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.noidung)
+        </dd>
+
+        <dt>
+            Ngày tạo
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ngay_tao)
+        </dd>
+    </dl>
+</div>
+
+@if (!Model.da_xu_ly)
+{
+    if (Session["isAdmin"] != null && (bool)Session["isAdmin"])
+    {
+        using (Html.BeginForm("PhanHoi", "BaoCaoHoTro", new { id = Model.mabao_cao }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="phanHoi">Phản hồi</label>
+                <textarea id="phanHoi" name="phanHoi" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Phản hồi" class="btn btn-primary" />
+            </div>
+        }
+    }
+    else
+    {
+        <p>Báo cáo này chưa được xử lý.</p>
+    }
+}
+else
+{
+    <div>
+        <h4>Phản hồi</h4>
+        <p>@Model.phan_hoi</p>
+        @if (Session["isAdmin"] != null && (bool)Session["isAdmin"])
+        {
+            <button id="btnEditPhanHoi" class="btn btn-secondary">Sửa phản hồi</button>
+            <div id="editPhanHoi" style="display:none;">
+                @using (Html.BeginForm("SuaPhanHoi", "BaoCaoHoTro", new { id = Model.mabao_cao }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="phanHoi">Sửa phản hồi</label>
+                        <textarea id="phanHoi" name="phanHoi" class="form-control" rows="5">@Model.phan_hoi</textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Lưu phản hồi" class="btn btn-primary" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+<p>
+    @{
+        string _link = Url.Action("Index");
+        if (ViewBag.Back_Url != null)
+        {
+            _link = ViewBag.Back_Url;
+        }
+    }
+    <i class="fa-regular fa-square-caret-left"></i> <a href="@_link">Quay lại</a>
+</p>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#btnEditPhanHoi").click(function () {
+                $("#editPhanHoi").toggle();
+            });
+        });
+    </script>
+}
