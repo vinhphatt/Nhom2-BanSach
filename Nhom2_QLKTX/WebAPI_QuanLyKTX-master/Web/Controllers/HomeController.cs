@@ -70,11 +70,17 @@ namespace Web.Controllers
                     Session["user_id"] = u.matk;
                     Session["isAdmin"] = (u.cvu == "ADMIN");
 
-                    // Lấy maphong của người dùng
+                    // Lấy maphong va mahs của người dùng
                     var student = db.HOCSINHs.FirstOrDefault(s => s.matk == u.matk);
                     if (student != null)
                     {
                         Session["maphong"] = student.maphong;
+                        Session["mahs"] = student.mahs; // Lưu mahs vào session
+                    }
+                    var newstudent = db.HOCSINH_NEW.FirstOrDefault(s => s.matk == u.matk);
+                    if (newstudent != null)
+                    {
+                        Session["mahs"] = newstudent.mahs; // Lưu mahs vào session
                     }
                 }
                 else
@@ -133,7 +139,7 @@ namespace Web.Controllers
         }
         [CheckUserSession]
         [HttpPost, Route("ThongTinTaiKhoan")]
-        public ActionResult ThongTinTaiKhoan(TAIKHOAN e)
+        public ActionResult ThongTinTaiKhoan(TAIKHOAN e, string quequan, DateTime? ngaysinh, bool? gioitinh)
         {
             if (e != null)
             {
@@ -162,6 +168,9 @@ namespace Web.Controllers
                         if (hocSinh != null)
                         {
                             hocSinh.hoten = e.hoten;
+                            hocSinh.quequan = quequan;
+                            hocSinh.ngaysinh = ngaysinh;
+                            hocSinh.gioitinh = gioitinh;
                             db.SaveChanges();
                         }
 
@@ -169,6 +178,9 @@ namespace Web.Controllers
                         if (hocSinhNew != null)
                         {
                             hocSinhNew.hoten = e.hoten;
+                            hocSinhNew.quequan = quequan;
+                            hocSinhNew.ngaysinh = ngaysinh;
+                            hocSinhNew.gioitinh = gioitinh;
                             db.SaveChanges();
                         }
                     }
