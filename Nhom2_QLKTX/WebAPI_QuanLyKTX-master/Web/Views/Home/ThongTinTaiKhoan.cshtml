@@ -1,8 +1,9 @@
-﻿@model Web.Models.TAIKHOAN
+@model Web.Models.TAIKHOAN
 
 @{
     ViewBag.Title = "Sửa tài khoản";
     Layout = "~/Views/Shared/MainLayout.cshtml";
+    bool isAdmin = Session["isAdmin"] != null && (bool)Session["isAdmin"];
 }
 
 <div class="container">
@@ -38,7 +39,7 @@
                 @Html.LabelFor(model => model.pass, "Mật khẩu ", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.PasswordFor(model => model.pass, new { @class = "form-control", placeholder = "Nhập mật khẩu mới nếu muốn đổi" })
-                    @Html.ValidationMessageFor(model => model.pass, "Giữ nguyên mật khẩu", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.pass, "", new { @class = "text-danger" })
                 </div>
             </div>
 
@@ -49,6 +50,39 @@
                     <p class="form-control-plaintext">@Model.cvu</p>
                 </div>
             </div>
+
+            @if (!isAdmin)
+            {
+                <!-- Quê quán -->
+                <div class="form-group row mb-3">
+                    @Html.Label("quequan", "Quê quán", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.Editor("quequan", new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập quê quán" } })
+                        @Html.ValidationMessage("quequan", "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!-- Ngày sinh -->
+                <div class="form-group row mb-3">
+                    @Html.Label("ngaysinh", "Ngày sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="date" name="ngaysinh" class="form-control" />
+                        @Html.ValidationMessage("ngaysinh", "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!-- Giới tính -->
+                <div class="form-group row mb-3">
+                    @Html.Label("gioitinh", "Giới tính", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <select class="form-control" name="gioitinh">
+                            <option value="true">Nam</option>
+                            <option value="false">Nữ</option>
+                        </select>
+                        @Html.ValidationMessage("gioitinh", "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
 
             <!-- Nút lưu -->
             <div class="form-group row">
